@@ -1,0 +1,148 @@
+#include <LiquidCrystal.h>
+
+int waterTemp = 0;
+int oilTemp = 1;
+int ambientTemp = 2;
+int ambientLight = 3;
+int backLight = 10;
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+byte temp[8] = {
+	B00100,
+	B01010,
+	B01010,
+	B01110,
+	B01110,
+	B11111,
+	B11111,
+	B01110,
+};
+
+byte water [8] = {
+	B00100,
+	B00100,
+	B01010,
+	B01010,
+	B10001,
+	B10001,
+	B10001,
+	B01110,
+};
+byte oil [8] = {
+	B00000,
+	B11111,
+	B00000,
+	B10111,
+	B00000,
+	B01110,
+	B10001,
+	B01110,
+};
+byte colon [8] = {
+  B00000,
+  B00000,
+  B01100,
+  B01100,
+  B00000,
+  B01100,
+  B01100,
+  B00000,
+};
+byte degree [8] = {
+  B00000,
+  B11100,
+  B10100,
+  B11100,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+};
+byte psi [8] = {
+  B10111,
+  B00000,
+  B10111,
+  B10101,
+  B11101,
+  B01000,
+  B10100,
+  B11111,
+};
+byte outside [8] = {
+  B00000,
+  B01111,
+  B10100,
+  B01111,
+  B00000,
+  B01110,
+  B10001,
+  B01110,
+};
+
+void setup() {
+  //create custom characters for water/oil/temp/etc symbols
+  lcd.createChar(0, temp);
+  lcd.createChar(1, water);
+  lcd.createChar(2, oil);
+  lcd.createChar(3, colon);
+  lcd.createChar(4, degree);
+  lcd.createChar(5, psi);
+  lcd.createChar(6, outside);
+  //begin writing data to lcd
+  lcd.begin(16, 2);
+  //write water temp logo to upper left
+  lcd.write(byte(1));
+  lcd.write(byte(0));
+  lcd.write(byte(3));
+  //write degree symbol
+  lcd.setCursor(6,0);
+  lcd.write(byte(4));
+  lcd.print("C");
+  //write oil temp logo to lower left
+  lcd.setCursor(0,1);
+  lcd.write(byte(2));
+  lcd.write(byte(0));
+  lcd.write(byte(3));
+  //write degree symbol
+  lcd.setCursor(6,1);
+  lcd.write(byte(4));
+  lcd.print("C");
+  //write outside air temp symbol
+  lcd.setCursor(9,0);
+  lcd.write(byte(6));
+  lcd.write(byte(0));
+  lcd.setCursor(14,0);
+  lcd.write(byte(4));
+  lcd.print("C");
+  //write oil pressure symbols
+  lcd.setCursor(9,1);
+  lcd.write(byte(2));
+  lcd.setCursor(15,1);
+  lcd.write(byte(5));
+};
+
+void loop()
+{
+  //Water Temp Reading
+  int WTReading = analogRead(waterTemp);
+  float WTVolts = WTReading * 5.0 / 1024.0;
+  float tempW = (WTVolts -0.5) * 100;
+  lcd.setCursor(3,0);
+  lcd.print(tempW,0);
+  //Oil Temp Reading
+  int OTReading = analogRead(oilTemp);
+  float OTVolts = OTReading * 5.0 / 1024.0;
+  float tempO = (OTVolts - 0.5) * 100;
+  lcd.setCursor(3,1);
+  lcd.print(tempO,0);
+  //Ambient Temp Reading
+  /*int ambientReading = analogRead(ambientTemp);
+  float ambientVolts = ambientReading * 5.0 / 1024.0;
+  float tempAmbient = (ambientVolts - 0.5) * 100;
+  lcd.setCursor(12,0);
+  lcd.print(tempAmbient,0);
+  */
+  delay(1000);
+
+}
